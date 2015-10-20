@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CsvImportTest.Examples.EF;
-using CsvImport;
-using CsvImport.Example.CsvModels;
 using System.Linq;
 using CsvImportTest.Examples.EF.Entity;
 using System.IO;
 using System.Reflection;
+using Pkshetlie.Csv.Import;
+using CsvImportTest.Example.CsvModels;
 
 namespace CsvImportTest
 {
@@ -18,7 +18,7 @@ namespace CsvImportTest
         {
             try
             {
-                CsvImport.CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
+                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
 
             }
             catch { }
@@ -33,7 +33,7 @@ namespace CsvImportTest
         {
             try
             {
-                CsvImport.CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
+                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
 
             }
             catch { }
@@ -46,7 +46,7 @@ namespace CsvImportTest
         {
             try
             {
-                CsvImport.CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
+                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
 
             }
             catch { }

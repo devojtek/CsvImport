@@ -4,8 +4,9 @@ using System;
 using CsvImportTest.Examples.EF;
 using CsvImportTest.Examples.EF.Entity;
 using System.Linq;
+using Pkshetlie.Csv.Import.Interfaces;
 
-namespace CsvImport.Example.CsvModels
+namespace CsvImportTest.Example.CsvModels
 {
     public class ProductModel : ICsvModel<MyContext>
     {

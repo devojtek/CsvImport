@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Data.Entity;
 using CsvHelper;
+using Pkshetlie.Csv.Import.Interfaces;
 
-namespace CsvImport
+namespace Pkshetlie.Csv.Import
 {
     public class CsvImport
     {

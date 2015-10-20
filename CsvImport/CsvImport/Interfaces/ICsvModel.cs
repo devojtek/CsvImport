@@ -1,4 +1,4 @@
-﻿namespace CsvImport
+﻿namespace Pkshetlie.Csv.Import.Interfaces
 {
     public interface ICsvModel<TContext> 
     {
