@@ -16,10 +16,13 @@ namespace CsvImportTest
         [TestMethod]
         public void BasicTest()
         {
+
+            string str = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CsvFolder\\");
+            DirectoryInfo import = Directory.CreateDirectory(str);
             try
             {
-                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
-
+                CsvImport csv = new CsvImport(import);
+                csv.Import<ProductMap, ProductModel, MyContext>("products-*.csv");
             }
             catch { }
             MyContext db = new MyContext();
@@ -31,10 +34,12 @@ namespace CsvImportTest
         [TestMethod]
         public void CountProduct()
         {
+            string str = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CsvFolder\\");
+            DirectoryInfo import = Directory.CreateDirectory(str);
             try
             {
-                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
-
+                CsvImport csv = new CsvImport(import);
+                csv.Import<ProductMap, ProductModel, MyContext>("products-*.csv");
             }
             catch { }
             MyContext db = new MyContext();
@@ -44,14 +49,17 @@ namespace CsvImportTest
         [TestMethod]
         public void BaguetteRightQuantity()
         {
+
+            string str = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CsvFolder\\");
+            DirectoryInfo import = Directory.CreateDirectory(str);
             try
             {
-                CsvImport.Import<ProductMap, ProductModel, MyContext>("products-*.csv", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CsvFolder\\");
-
+                CsvImport csv = new CsvImport(import);
+                csv.Import<ProductMap, ProductModel, MyContext>("products-*.csv");
             }
             catch { }
             MyContext db = new MyContext();
-            Assert.AreEqual(20, db.Products.Where(x=>x.Reference == "BAGUETTE").First().Quantity);
+            Assert.AreEqual(20, db.Products.Where(x => x.Reference == "BAGUETTE").First().Quantity);
         }
     }
 }
