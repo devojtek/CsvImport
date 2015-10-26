@@ -18,10 +18,36 @@ namespace Pkshetlie.Csv.Import
         public event OnLineErrorHandler OnLineError;
 
         /// <summary>
-        /// Directory where are csv
+        /// Directory where is csv
         /// </summary>
         public DirectoryInfo ImportDirectory { get; set; }
-        
+        /// <summary>
+        /// Directory where goes csv
+        /// </summary>
+        private DirectoryInfo _doneDirectory;
+
+        /// <summary>
+        /// Don't do conversion if utf8
+        /// </summary>
+        private bool _convertToUtf8 = false;
+
+        /// <summary>
+        /// Ask to Delete File
+        /// </summary>
+        private bool _removeFile = false;
+
+        /// <summary>
+        /// Field separator in CSV file
+        /// </summary>
+        public string ColumnSeparator { get; set; }
+
+        /// <summary>
+        /// Line separator in CSV file
+        /// </summary>
+        public string LineSeparator { get; set; }
+
+
+
         /// <summary>
         /// Directory where to place file when done
         /// </summary>
@@ -34,22 +60,38 @@ namespace Pkshetlie.Csv.Import
             set
             {
                 _doneDirectory = value;
-                RmFile = _doneDirectory == null;
             }
         }
-        private DirectoryInfo _doneDirectory;
-
-        private bool RmFile = true;
 
         /// <summary>
-        /// Field separator in CSV file
+        /// Do conversion frome ANSI to UTF8 true : yes / false : no
         /// </summary>
-        public string ColumnSeparator { get; set; }
+        public bool ConvertToUtf8
+        {
+            get
+            {
+                return _convertToUtf8;
+            }
+            set
+            {
+                _convertToUtf8 = value;
+            }
+        }
 
         /// <summary>
-        /// Line separator in CSV file
+        ///  Remove File true : yes / false : no
         /// </summary>
-        public string LineSeparator { get; set; }
+        public bool RemoveFile
+        {
+            get
+            {
+                return _removeFile;
+            }
+            set
+            {
+                _removeFile = true;
+            }
+        }
 
         public CsvImport(DirectoryInfo importDirectory, DirectoryInfo doneDirectory = null)
         {
@@ -77,7 +119,10 @@ namespace Pkshetlie.Csv.Import
             {
                 try
                 {
-                    ConvertAnsiToUTF8(file.FullName);
+                    if (ConvertToUtf8)
+                    {
+                        ConvertAnsiToUTF8(file.FullName);
+                    }
                     // Open the file
                     using (StreamReader streamReader = new StreamReader(file.FullName, Encoding.UTF8))
                     {
@@ -105,6 +150,7 @@ namespace Pkshetlie.Csv.Import
                                         if (it != null)
                                         {
                                             it.CsvFileName = file.Name;
+                                            it.Index = index;
                                             it.OnStart(db);
                                             if (it.TestBeforeSave(db))
                                             {
@@ -126,11 +172,13 @@ namespace Pkshetlie.Csv.Import
                         }
                     }
 
-                    if (RmFile)
+
+
+                    if (RemoveFile)
                     {
                         File.Delete(file.FullName);
                     }
-                    else
+                    else if (DoneDirectory != null)
                     {
                         File.Move(file.FullName, Path.Combine(DoneDirectory.FullName, file.Name));
                     }
