@@ -64,7 +64,7 @@ namespace Pkshetlie.Csv.Import
         }
 
         /// <summary>
-        /// Do conversion frome ANSI to UTF8 true : yes / false : no
+        /// Do conversion frome ANSI to UTF8 : true : yes / false : no
         /// </summary>
         public bool ConvertToUtf8
         {
@@ -107,9 +107,7 @@ namespace Pkshetlie.Csv.Import
         /// <typeparam name="TMap">a CsvClassMap </typeparam>
         /// <typeparam name="TModel">A model implementing an ICSVMocel</typeparam>
         /// <typeparam name="TContext"> DbContext</typeparam>
-        /// <param name="fileName"> the file name to search in directory</param>
-        /// <param name="importPath">import directory</param>
-        /// <param name="donePath">Done directory</param>
+        /// <param name="fileName">the name of the csv to load</param>
         /// <returns></returns>
         public List<TModel> Import<TMap, TModel, TContext>(string fileName) where TMap : CsvHelper.Configuration.CsvClassMap<TModel> where TModel : ICsvModel<TContext> where TContext : DbContext, new()
         {
@@ -121,6 +119,7 @@ namespace Pkshetlie.Csv.Import
                 {
                     if (ConvertToUtf8)
                     {
+                        //need to convert to utf8
                         ConvertAnsiToUTF8(file.FullName);
                     }
                     // Open the file
@@ -171,9 +170,6 @@ namespace Pkshetlie.Csv.Import
                             }
                         }
                     }
-
-
-
                     if (RemoveFile)
                     {
                         File.Delete(file.FullName);

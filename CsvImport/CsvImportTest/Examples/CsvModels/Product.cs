@@ -17,7 +17,7 @@ namespace CsvImportTest.Example.CsvModels
         private string _filename { get; set; }
 
 
-        public string Index { get; set; }
+        public int Index { get; set; }
         public string CsvFileName
         {
             get
