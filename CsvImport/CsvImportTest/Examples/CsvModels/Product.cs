@@ -16,7 +16,6 @@ namespace CsvImportTest.Example.CsvModels
         public string Price { get; set; }
         private string _filename { get; set; }
 
-
         public int Index { get; set; }
         public string CsvFileName
         {
@@ -40,16 +39,13 @@ namespace CsvImportTest.Example.CsvModels
         }
         public void OnStart(MyContext db)
         {
-            Console.WriteLine("Start !");
-
+            Console.WriteLine("{0} ... ",Name);
         }
-
         public bool TestBeforeSave(MyContext db)
         {
             Console.WriteLine("Do some test, if not passed don't do Save() !");
             return true;
         }
-
         public void Save(MyContext db)
         {
             Product p = db.Products.Where(x => x.Reference.ToLower() == Reference.ToLower()).FirstOrDefault();
@@ -71,12 +67,12 @@ namespace CsvImportTest.Example.CsvModels
                 db.Entry(p).State = EntityState.Modified;
             }
 
-            db.SaveChanges();
         }
 
         public void OnFinish(MyContext db)
         {
-            Console.WriteLine("Finish !");
+            db.SaveChanges();
+            Console.WriteLine("saved");
         }
     }
 
@@ -85,7 +81,6 @@ namespace CsvImportTest.Example.CsvModels
         public ProductMap()
         {
             Map(x => x.Name).Index(0);
-
             Map(x => x.Reference).Index(1);
             Map(x => x.Quantity).Index(2);
             Map(x => x.Price).Index(3);
