@@ -77,6 +77,7 @@ namespace Pkshetlie.Csv.Import
             {
                 try
                 {
+                    ConvertAnsiToUTF8(file.FullName);
                     // Open the file
                     using (StreamReader streamReader = new StreamReader(file.FullName, Encoding.UTF8))
                     {
@@ -97,7 +98,6 @@ namespace Pkshetlie.Csv.Import
                             for (int loop = 0; loop < itemsCount; loop++)
                             {
                                 TModel it = itemsModel.ElementAtOrDefault(index);
-
                                 try
                                 {
                                     using (TContext db = new TContext())
@@ -146,5 +146,13 @@ namespace Pkshetlie.Csv.Import
 
             return itemsModel;
         }
+
+        private void ConvertAnsiToUTF8(string inputFilePath)
+        {
+            string fileContent = File.ReadAllText(inputFilePath, Encoding.Default);
+            File.Delete(inputFilePath);
+            File.WriteAllText(inputFilePath, fileContent, Encoding.UTF8);
+        }
+
     }
 }
