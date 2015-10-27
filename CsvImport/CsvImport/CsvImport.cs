@@ -93,11 +93,16 @@ namespace Pkshetlie.Csv.Import
             }
         }
 
-        public CsvImport(DirectoryInfo importDirectory, DirectoryInfo doneDirectory = null)
+        /// <summary>
+        /// initialize CsvImport
+        /// </summary>
+        /// <param name="importDirectory"></param>
+        /// <param name="doneDirectory"></param>
+        public CsvImport(DirectoryInfo importDirectory, DirectoryInfo doneDirectory = null, string columnSeparator = ";")
         {
             ImportDirectory = importDirectory;
             DoneDirectory = doneDirectory;
-            ColumnSeparator = ";";
+            ColumnSeparator = columnSeparator;
             LineSeparator = Environment.NewLine;
         }
 
@@ -113,7 +118,7 @@ namespace Pkshetlie.Csv.Import
         {
             // Configuration
             List<TModel> itemsModel = new List<TModel>();
-            foreach (FileInfo file in ImportDirectory.EnumerateFiles(fileName))
+            foreach (FileInfo file in ImportDirectory.EnumerateFiles(fileName).OrderBy(x=>x.Name))
             {
                 try
                 {
