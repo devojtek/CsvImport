@@ -155,6 +155,7 @@ namespace Pkshetlie.Csv.Import
                             csvReader.Configuration.TrimHeaders = true;
                             csvReader.Configuration.HasHeaderRecord = HasFirstLine;
                             csvReader.Configuration.RegisterClassMap<TMap>();
+                            csvReader.Configuration.WillThrowOnMissingField = false;
 
                             // Get records
                             itemsModel = csvReader.GetRecords<TModel>().ToList();
