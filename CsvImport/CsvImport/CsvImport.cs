@@ -37,6 +37,10 @@ namespace Pkshetlie.Csv.Import
         private bool _removeFile = false;
 
         /// <summary>
+        /// Ask to Delete File
+        /// </summary>
+        private bool _hasFistLine = true;
+        /// <summary>
         /// Field separator in CSV file
         /// </summary>
         public string ColumnSeparator { get; set; }
@@ -92,7 +96,20 @@ namespace Pkshetlie.Csv.Import
                 _removeFile = true;
             }
         }
-
+        /// <summary>
+        ///  Remove File true : yes / false : no
+        /// </summary>
+        public bool HasFirstLine
+        {
+            get
+            {
+                return _hasFistLine;
+            }
+            set
+            {
+                _hasFistLine = value;
+            }
+        }
         /// <summary>
         /// initialize CsvImport
         /// </summary>
@@ -136,6 +153,7 @@ namespace Pkshetlie.Csv.Import
                             csvReader.Configuration.Delimiter = ColumnSeparator;
                             csvReader.Configuration.TrimFields = true;
                             csvReader.Configuration.TrimHeaders = true;
+                            csvReader.Configuration.HasHeaderRecord = HasFirstLine;
                             csvReader.Configuration.RegisterClassMap<TMap>();
 
                             // Get records
