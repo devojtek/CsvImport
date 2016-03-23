@@ -20,9 +20,20 @@ __Program.cs__ (your program)
 DirectoryInfo import = Directory.CreateDirectory("C:/");
 //do Import
 CsvImport csv = new CsvImport(import);
-csv.Import<ProductMap, ProductModel, MyContext>("products-*.csv");
-MyContext db = new MyContext();
-Product p = db.Products.Where(x => x.Reference == "FROMAGE").FirstOrDefault();
+// do import with spécific configuration
+
+// CsvConfiguration baseConfig = new CsvConfiguration()
+//            {
+//                Delimiter = ";",
+//                TrimFields = true,
+//                TrimHeaders = true,
+//                HasHeaderRecord = true,
+//                WillThrowOnMissingField = false
+//            };
+// CsvImport csv = new CsvImport(import,baseConfig);
+
+csv.Import<ProductMap, ProductModel, MyDbContext>("products-*.csv");
+
 ```
 __Product.cs__ (Csv Model & Mapper)
 ```C#
@@ -52,19 +63,23 @@ public class ProductModel : ICsvModel<MyContext>
       }
     }
   }
+
   public void OnNameChange(string filename)
   {
     Console.WriteLine("Ouverture du fichier : " + filename);
   }
+
   public void OnStart(MyContext db)
   {
     Console.WriteLine(string.Format("{0} ... ",Reference);
   }
+
   public bool TestBeforeSave(MyContext db)
   {
     Console.WriteLine("Do some test, if not passed don't do Save() !");
     return true;
   }
+
   public void Save(MyContext db)
   {
     Product p = db.Products.Where(x => x.Reference.ToLower() == Reference.ToLower()).FirstOrDefault();
@@ -84,6 +99,7 @@ public class ProductModel : ICsvModel<MyContext>
       db.Entry(p).State = EntityState.Modified;
     }
   }
+
   public void OnFinish(MyContext db)
   {
     db.SaveChanges();
