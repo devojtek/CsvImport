@@ -1,5 +1,7 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using Pkshetlie.Csv.Import.Interfaces;
+using Pkshetlie.Csv.Import.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -27,30 +29,9 @@ namespace Pkshetlie.Csv.Import
         private DirectoryInfo _doneDirectory;
 
         /// <summary>
-        /// Don't do conversion if utf8
-        /// </summary>
-        private bool _convertToUtf8 = false;
-
-        /// <summary>
         /// Ask to Delete File
         /// </summary>
         private bool _removeFile = false;
-
-        /// <summary>
-        /// Ask to Delete File
-        /// </summary>
-        private bool _hasFistLine = true;
-        /// <summary>
-        /// Field separator in CSV file
-        /// </summary>
-        public string ColumnSeparator { get; set; }
-
-        /// <summary>
-        /// Line separator in CSV file
-        /// </summary>
-        public string LineSeparator { get; set; }
-
-
 
         /// <summary>
         /// Directory where to place file when done
@@ -68,21 +49,6 @@ namespace Pkshetlie.Csv.Import
         }
 
         /// <summary>
-        /// Do conversion frome ANSI to UTF8 : true : yes / false : no
-        /// </summary>
-        public bool ConvertToUtf8
-        {
-            get
-            {
-                return _convertToUtf8;
-            }
-            set
-            {
-                _convertToUtf8 = value;
-            }
-        }
-
-        /// <summary>
         ///  Remove File true : yes / false : no
         /// </summary>
         public bool RemoveFile
@@ -96,31 +62,20 @@ namespace Pkshetlie.Csv.Import
                 _removeFile = true;
             }
         }
-        /// <summary>
-        ///  Remove File true : yes / false : no
-        /// </summary>
-        public bool HasFirstLine
-        {
-            get
-            {
-                return _hasFistLine;
-            }
-            set
-            {
-                _hasFistLine = value;
-            }
-        }
+
+
+        private CsvConfiguration _configuration { get; set; }
+
         /// <summary>
         /// initialize CsvImport
         /// </summary>
         /// <param name="importDirectory"></param>
         /// <param name="doneDirectory"></param>
-        public CsvImport(DirectoryInfo importDirectory, DirectoryInfo doneDirectory = null, string columnSeparator = ";")
+        public CsvImport(DirectoryInfo importDirectory, DirectoryInfo doneDirectory = null)
         {
             ImportDirectory = importDirectory;
             DoneDirectory = doneDirectory;
-            ColumnSeparator = columnSeparator;
-            LineSeparator = Environment.NewLine;
+            _configuration = _configuration = new CsvConfiguration();
         }
 
         /// <summary>
@@ -131,32 +86,34 @@ namespace Pkshetlie.Csv.Import
         /// <typeparam name="TContext"> DbContext</typeparam>
         /// <param name="fileName">the name of the csv to load</param>
         /// <returns></returns>
-        public List<TModel> Import<TMap, TModel, TContext>(string fileName) where TMap : CsvHelper.Configuration.CsvClassMap<TModel> where TModel : ICsvModel<TContext> where TContext : DbContext, new()
+        public List<TModel> Import<TMap, TModel, TContext>(string fileName, CsvConfiguration configuration = null) where TMap : CsvHelper.Configuration.CsvClassMap<TModel> where TModel : ICsvModel<TContext> where TContext : DbContext, new()
         {
+            if (configuration != null)
+            {
+                _configuration.Merge(configuration);
+            }
             // Configuration
             List<TModel> itemsModel = new List<TModel>();
-            foreach (FileInfo file in ImportDirectory.EnumerateFiles(fileName).OrderBy(x=>x.Name))
+            foreach (FileInfo file in ImportDirectory.EnumerateFiles(fileName).OrderBy(x => x.Name))
             {
                 try
                 {
-                    if (ConvertToUtf8)
+                    
+                    using (StreamReader streamReader = new StreamReader(file.FullName, true))
                     {
-                        //need to convert to utf8
-                        ConvertAnsiToUTF8(file.FullName);
-                    }
-                    // Open the file
+                        if (Encoding.UTF8 != streamReader.CurrentEncoding)
+                        {
+                            //need to convert to utf8
+                            ConvertAnsiToUTF8(file.FullName);
+                        }
+
+                    }      // Open the file
                     using (StreamReader streamReader = new StreamReader(file.FullName, Encoding.UTF8))
                     {
-                        using (CsvReader csvReader = new CsvReader(streamReader))
+                        using (CsvReader csvReader = new CsvReader(streamReader, _configuration))
                         {
                             // Configure CsvReader
-                            csvReader.Configuration.Delimiter = ColumnSeparator;
-                            csvReader.Configuration.TrimFields = true;
-                            csvReader.Configuration.TrimHeaders = true;
-                            csvReader.Configuration.HasHeaderRecord = HasFirstLine;
                             csvReader.Configuration.RegisterClassMap<TMap>();
-                            csvReader.Configuration.WillThrowOnMissingField = false;
-
                             // Get records
                             itemsModel = csvReader.GetRecords<TModel>().ToList();
 
