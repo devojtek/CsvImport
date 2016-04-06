@@ -86,7 +86,7 @@ namespace Pkshetlie.Csv.Import
         /// <typeparam name="TContext"> DbContext</typeparam>
         /// <param name="fileName">the name of the csv to load</param>
         /// <returns></returns>
-        public List<TModel> Import<TMap, TModel, TContext>(string fileName, CsvConfiguration configuration = null) where TMap : CsvHelper.Configuration.CsvClassMap<TModel> where TModel : ICsvModel<TContext> where TContext : DbContext, new()
+        public List<TModel> Import<TMap, TModel, TContext>(string fileName, CsvConfiguration configuration = null, bool forceEncodingUtf8 = false) where TMap : CsvHelper.Configuration.CsvClassMap<TModel> where TModel : ICsvModel<TContext> where TContext : DbContext, new()
         {
             if (configuration != null)
             {
@@ -98,10 +98,10 @@ namespace Pkshetlie.Csv.Import
             {
                 try
                 {
-                    
+
                     using (StreamReader streamReader = new StreamReader(file.FullName, true))
                     {
-                        if (Encoding.UTF8 != streamReader.CurrentEncoding)
+                        if (Encoding.UTF8 != streamReader.CurrentEncoding || forceEncodingUtf8)
                         {
                             //need to convert to utf8
                             ConvertAnsiToUTF8(file.FullName);
